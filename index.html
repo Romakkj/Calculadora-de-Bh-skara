@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Equação do Segundo Grau</title>
+    <!-- Importar a fonte Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Montserrat, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: ##f0f0f0;
+            color: #333;
+        }
+
+        .calculator {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.100);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #steps {
+            margin-top: 30px;
+            font-size: 16px;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+
+        #credits {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Calculadora de Equação do Segundo Grau</h1>
+        <div class="input-group">
+            <label for="equation">Equação: </label>
+            <input type="text" id="equation" placeholder="Ex: 2x^2 + 3x - 4 = 0">
+        </div>
+        <button onclick="solveQuadratic()">Calcular Raízes</button>
+        <div id="results"></div>
+        <button onclick="showSteps()">Mostrar Passo a Passo</button>
+        <div id="steps" style="display: none;"></div>
+        <button onclick="showCredits()" id="creditsButton">Créditos</button>
+        <div id="credits" style="display: none;">Criado por Raphael Romano</div>
+        <button onclick="showProduct()">Ver Produto das Raízes</button>
+        <div id="product" style="display: none;"></div>
+    </div>
+
+    <script>
+        function solveQuadratic() {
+            const equationInput = document.getElementById('equation').value.trim();
+
+            if (!equationInput) {
+                alert('Por favor, insira uma equação.');
+                return;
+            }
+
+            const { coefA, coefB, coefC } = parseEquation(equationInput);
+
+            const a = isNaN(coefA) ? 0 : coefA;
+            const b = isNaN(coefB) ? 0 : coefB;
+            const c = isNaN(coefC) ? 0 : coefC;
+
+            const delta = b * b - 4 * a * c;
+            let result = '';
+
+            if (delta < 0) {
+                result = 'A equação não possui raízes reais.';
+            } else {
+                const x1 = (-b + Math.sqrt(delta)) / (2 * a);
+                const x2 = (-b - Math.sqrt(delta)) / (2 * a);
+                result = `Raiz 1 (x1): ${x1.toFixed(2)}<br>Raiz 2 (x2): ${x2.toFixed(2)}`;
+            }
+
+            document.getElementById('results').innerHTML = result;
+        }
+
+        function showSteps() {
+            const equationInput = document.getElementById('equation').value.trim();
+
+            if (!equationInput) {
+                alert('Por favor, insira uma equação.');
+                return;
+            }
+
+            const { coefA, coefB, coefC } = parseEquation(equationInput);
+
+            const a = isNaN(coefA) ? 0 : coefA;
+            const b = isNaN(coefB) ? 0 : coefB;
+            const c = isNaN(coefC) ? 0 : coefC;
+
+            const delta = b * b - 4 * a * c;
+            let steps = '';
+
+            steps += `Delta (Δ) = b² - 4ac\n`;
+            steps += `Δ = (${b})² - 4 * ${a} * ${c}\n`;
+            steps += `Δ = ${b * b} - ${4 * a * c}\n`;
+            steps += `Δ = ${delta}\n\n`;
+
+            if (delta < 0) {
+                steps += 'Como Δ < 0, a equação não possui raízes reais.';
+            } else {
+                const x1 = (-b + Math.sqrt(delta)) / (2 * a);
+                const x2 = (-b - Math.sqrt(delta)) / (2 * a);
+
+                steps += 'Aplicando a fórmula de Bhaskara:\n';
+                steps += `x1 = (-b + √Δ) / (2a)\n`;
+                steps += `x1 = (${b} + √${delta}) / (2 * ${a})\n`;
+                steps += `x1 = (${b} + ${Math.sqrt(delta)}) / ${2 * a}\n`;
+                steps += `x1 = ${x1.toFixed(2)}\n\n`;
+
+                steps += `x2 = (-b - √Δ) / (2a)\n`;
+                steps += `x2 = (${b} - √${delta}) / (2 * ${a})\n`;
+                steps += `x2 = (${b} - ${Math.sqrt(delta)}) / ${2 * a}\n`;
+                steps += `x2 = ${x2.toFixed(2)}`;
+            }
+
+            document.getElementById('steps').innerHTML = steps;
+            document.getElementById('steps').style.display = 'block';
+        }
+
+        function parseEquation(input) {
+            const pattern = /(-?\d*)\s*x\^2\s*([+-]?\s*\d*)\s*x\s*([+-]?\s*\d*)\s*=\s*0/;
+            const matches = input.match(pattern);
+
+            if (!matches || matches.length !== 4) {
+                return { coefA: NaN, coefB: NaN, coefC: NaN };
+            }
+
+            const coefA = parseFloat(matches[1].replace(/\s/g, ''));
+            const coefB = parseFloat(matches[2].replace(/\s/g, ''));
+            const coefC = parseFloat(matches[3].replace(/\s/g, ''));
+
+            return { coefA, coefB, coefC };
+        }
+
+        function showCredits() {
+            const creditsDiv = document.getElementById('credits');
+            creditsDiv.style.display = 'block';
+        }
+
+        function showProduct() {
+            const equationInput = document.getElementById('equation').value.trim();
+
+            if (!equationInput) {
+                alert('Por favor, insira uma equação.');
+                return;
+            }
+
+            const { coefA, coefB, coefC } = parseEquation(equationInput);
+
+            const a = isNaN(coefA) ? 0 : coefA;
+            const b = isNaN(coefB) ? 0 : coefB;
+            const c = isNaN(coefC) ? 0 : coefC;
+
+            const delta = b * b - 4 * a * c;
+
+            if (delta < 0) {
+                alert('A equação não possui raízes reais para calcular o produto.');
+                return;
+            }
+
+            const x1 = (-b + Math.sqrt(delta)) / (2 * a);
+            const x2 = (-b - Math.sqrt(delta)) / (2 * a);
+            const product = x1 * x2;
+
+            document.getElementById('product').innerHTML = `Produto (x1 * x2): ${product.toFixed(2)}`;
+            document.getElementById('product').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
